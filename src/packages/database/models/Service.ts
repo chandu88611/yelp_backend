@@ -1,10 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from "typeorm";
 import { Business } from "./Business";
 
-@Entity("service")
+@Entity('services')
 export class Service {
     @PrimaryGeneratedColumn("uuid")
     id: string;
+
+    @ManyToOne(() => Business, (business) => business.services, { onDelete: "CASCADE" })
+    business: Business;
 
     @Column({ length: 255 })
     name: string;
@@ -12,6 +15,6 @@ export class Service {
     @Column({ type: "text", nullable: true })
     description: string;
 
-    @ManyToMany(() => Business, (business) => business.services)
-    businesses: Business[];
+    @Column({ type: "float", nullable: true })
+    price: number;
 }

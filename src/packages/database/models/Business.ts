@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { 
+    Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, 
+    ManyToOne, OneToMany, ManyToMany, JoinTable 
+} from "typeorm";
 import { User } from "./User";
 import { Review } from "./Review";
 import { Photo } from "./Photo";
 import { Category } from "./Category";
 import { Service } from "./Service";
- 
 
 @Entity('businesses')
 export class Business {
@@ -29,74 +31,58 @@ export class Business {
     @Column({ nullable: true })
     website: string;
 
-    @Column({ type: "text" })
+    @Column({ nullable: true })
     address: string;
 
-    @Column({ length: 100 })
+    @Column({ nullable: true })
     city: string;
 
-    @Column({ length: 100 })
+    @Column({ nullable: true })
     state: string;
 
     @Column({ nullable: true })
     zipCode: string;
 
-    @Column({ length: 50 })
-    country: string;
-
-    @Column({ type: "decimal", precision: 9, scale: 6, nullable: true })
-    latitude: number;
-
-    @Column({ type: "decimal", precision: 9, scale: 6, nullable: true })
-    longitude: number;
+    @Column({ nullable: true })
+    googleMapUrl: string;
 
     @Column({ nullable: true })
-    googleMapsUrl: string;
+    socialLinks: string; // Store as JSON string (Facebook, Instagram, etc.)
 
-    @Column({ type: "time" })
-    openingTime: string;
+    @Column({ type: "simple-array", nullable: true })
+    operatingHours: string[]; // Example: ["Mon-Sat: 10AM-7PM", "Sun: 11AM-5PM"]
 
-    @Column({ type: "time" })
-    closingTime: string;
+    @Column({ type: "simple-array", nullable: true })
+    services: string[]; // Example: ["Manicure", "Pedicure", "Waxing", "Facial Treatments"]
 
-    @Column({ nullable: true })
-    facebookUrl: string;
+    @ManyToMany(() => Category, { cascade: true })
+    @JoinTable()
+    categories: Category[];
 
-    @Column({ nullable: true })
-    instagramUrl: string;
-
-    @Column({ nullable: true })
-    twitterUrl: string;
+    @Column({ type: "simple-array", nullable: true })
+    amenities: string[]; // Example: ["Free WiFi", "Complimentary Beverages"]
 
     @Column({ nullable: true })
-    linkedinUrl: string;
-
-    @Column({ length: 255, nullable: true })
-    ownerName: string;
+    specialOffers: string; // Example: "10% discount for first-time customers"
 
     @Column({ nullable: true })
-    ownerContact: string;
+    bookingUrl: string; // Link to booking page
 
-    @Column({ type: "text", nullable: true })
-    additionalInfo: string;
+    @OneToMany(() => Review, (review) => review.business, { cascade: true })
+    reviews: Review[];
+
+    @Column({ type: "float", default: 0 })
+    averageRating: number;
+
+    @Column({ type: "int", default: 0 })
+    reviewCount: number;
+
+    @OneToMany(() => Photo, (photo) => photo.business, { cascade: true })
+    photos: Photo[];
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @OneToMany(() => Review, (review) => review.business)
-    reviews: Review[];
-
-    @OneToMany(() => Photo, (photo) => photo.business)
-    photos: Photo[];
-
-    @ManyToMany(() => Category)
-    @JoinTable()
-    categories: Category[];
-
-    @ManyToMany(() => Service)
-    @JoinTable()
-    services: Service[];
 }

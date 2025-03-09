@@ -70,19 +70,19 @@ app.disable('x-powered-by');
 
 app.use(morgan('combined'));
 
-app.use(
-  morgan('combined', {
-    skip: (req: Request, res: Response) => res.statusCode < httpStatus.BAD_REQUEST,
-    stream: process.stderr,
-  }),
-);
+// app.use(
+//   morgan('combined', {
+//     skip: (req: Request, res: Response) => res.statusCode < httpStatus.BAD_REQUEST,
+//     stream: process.stderr,
+//   }),
+// );
 
-app.use(
-  morgan('combined', {
-    skip: (req: Request, res: Response) => res.statusCode >= httpStatus.BAD_GATEWAY,
-    stream: process.stdout,
-  }),
-);
+// app.use(
+//   morgan('combined', {
+//     skip: (req: Request, res: Response) => res.statusCode >= httpStatus.BAD_GATEWAY,
+//     stream: process.stdout,
+//   }),
+// );
 
 app.use(bodyParser.json())
  

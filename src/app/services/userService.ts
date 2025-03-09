@@ -1,6 +1,6 @@
  
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import * as bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken";
 import dataSource from "ormconfig";
 import config from "~/config";
 import { User } from "~/packages/database/models/User";
