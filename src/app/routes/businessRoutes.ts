@@ -2,7 +2,12 @@ import  { Router } from "express";
 import { BusinessController } from "../controllers/businessController";
 import { authenticateJWT } from "~/packages/api/middlewares/auth";
 import { AuthenticatedRequest } from "../types/types";
- 
+// import multer from "multer";
+
+// // ✅ Configure Multer (Store files in memory before sending to GoDaddy)
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+
 
 export class BusinessRoutes {
   public router: Router;
@@ -20,5 +25,24 @@ export class BusinessRoutes {
     this.router.get("/:id", (req, res) => this.businessController.getBusinessById(req, res));
     this.router.put("/:id", authenticateJWT, (req, res) => this.businessController.updateBusiness(req, res));
     this.router.delete("/:id", authenticateJWT, (req, res) => this.businessController.deleteBusiness(req, res));
+    this.router.put(
+      "/basic-details/:id",
+      authenticateJWT,
+      (req:AuthenticatedRequest, res) => this.businessController.updateBusinessDetails(req, res)
+    );
+
+    // ✅ Upload Business Photos
+    this.router.post(
+      "/upload-photos/:id",
+      // authenticateJWT,   upload.array("images", 10),
+      (req:AuthenticatedRequest, res) => this.businessController.uploadBusinessPhotos(req, res)
+    );
+
+    // ✅ Update Other Business Details
+    this.router.put(
+      "/other-details/:id",
+      authenticateJWT,
+      (req:AuthenticatedRequest, res) => this.businessController.updateOtherDetails(req, res)
+    );
   }
 }

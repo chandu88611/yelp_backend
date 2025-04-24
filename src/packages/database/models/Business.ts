@@ -7,6 +7,7 @@ import { Review } from "./Review";
 import { Photo } from "./Photo";
 import { Category } from "./Category";
 import { Service } from "./Service";
+import { Amenity } from "./Amenity";
 
 @Entity('businesses')
 export class Business {
@@ -38,6 +39,9 @@ export class Business {
     city: string;
 
     @Column({ nullable: true })
+    country: string;
+
+    @Column({ nullable: true })
     state: string;
 
     @Column({ nullable: true })
@@ -52,15 +56,19 @@ export class Business {
     @Column({ type: "simple-array", nullable: true })
     operatingHours: string[]; // Example: ["Mon-Sat: 10AM-7PM", "Sun: 11AM-5PM"]
 
-    @Column({ type: "simple-array", nullable: true })
-    services: string[]; // Example: ["Manicure", "Pedicure", "Waxing", "Facial Treatments"]
+    @ManyToMany(() => Service, { cascade: true })
+    @JoinTable()
+    services: Service[];
+  
+    @ManyToMany(() => Amenity, { cascade: true })
+    @JoinTable()
+    amenities: Amenity[]; 
 
     @ManyToMany(() => Category, { cascade: true })
     @JoinTable()
     categories: Category[];
 
-    @Column({ type: "simple-array", nullable: true })
-    amenities: string[]; // Example: ["Free WiFi", "Complimentary Beverages"]
+ // Example: ["Free WiFi", "Complimentary Beverages"]
 
     @Column({ nullable: true })
     specialOffers: string; // Example: "10% discount for first-time customers"
