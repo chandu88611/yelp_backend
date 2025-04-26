@@ -7,7 +7,7 @@ import { InvalidParameter } from '../helpers/exceptions/invalidParameter'
 import { NotFound } from '../helpers/exceptions/notFound'
 import { Unauthorized } from '../helpers/exceptions/unauthorized'
 
-import logger from '~/packages/api/helpers/logging'
+// import logger from '~/packages/api/helpers/logging'
 
 interface ErrorResponse {
   code: number
@@ -54,10 +54,7 @@ export const handleErrors = (err: any, req: Request, res: Response, next: NextFu
     delete response.errors
   }
 
-  logger.error(`${responseStatus} ${response.message}`, { url: req.originalUrl })
+  // logger.error(`${responseStatus} ${response.message}`, { url: req.originalUrl })
 
-  return res
-    .status(response.code)
-    .json(response)
-    .end()
+  return res.status(response.code).json(response).end()
 }

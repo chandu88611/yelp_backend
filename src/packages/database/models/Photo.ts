@@ -1,21 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
-import { Business } from "./Business";
-import { User } from "./User";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm'
+import { Business } from './Business'
+import { User } from './User'
 
-@Entity("photo")
+@Entity('photo')
 export class Photo {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
-    @ManyToOne(() => Business, (business) => business.photos, { onDelete: "CASCADE" })
-    business: Business;
+  @ManyToOne(() => Business, (business) => business.galleries, { onDelete: 'CASCADE' })
+  business: Business
 
-    @ManyToOne(() => User, (user) => user.photos, { onDelete: "CASCADE" })
-    user: User;
+  @ManyToOne(() => User, (user) => user.photos, { onDelete: 'CASCADE' })
+  user: User
 
-    @Column()
-    photoUrl: string;
+  @Column()
+  photoUrl: string
 
-    @CreateDateColumn()
-    uploadedAt: Date;
+  @CreateDateColumn()
+  uploadedAt: Date
 }
