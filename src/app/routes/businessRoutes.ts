@@ -2,8 +2,7 @@ import { Router } from 'express'
 import { BusinessController } from '../controllers/businessController'
 import { authenticateJWT } from '~/packages/api/middlewares/auth'
 import { AuthenticatedRequest } from '../types/types'
-import * as multer from 'multer';
-
+import * as multer from 'multer'
 
 // ✅ Configure Multer (Store files in memory before sending to GoDaddy)
 const storage = multer.memoryStorage()
@@ -41,6 +40,11 @@ export class BusinessRoutes {
       authenticateJWT,
       upload.array('images', 10),
       (req: AuthenticatedRequest, res) => this.businessController.uploadBusinessPhotos(req, res),
+    )
+
+    // ✅ Delete Business Photo
+    this.router.delete('/delete-photo/:businessId/:photoId', authenticateJWT, (req: AuthenticatedRequest, res) =>
+      this.businessController.deleteBusinessPhoto(req, res),
     )
 
     // ✅ Update Other Business Details

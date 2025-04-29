@@ -9,17 +9,14 @@ import * as morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import * as cookieParser from 'cookie-parser'
 import * as xss from 'xss-clean'
-import * as hpp from 'hpp' 
+import * as hpp from 'hpp'
 import config from '~/config'
 import { handleErrors } from '~/packages/api/middlewares/error'
+import * as path from 'path'
 
 import { MainRouter } from './app/routes'
 // import session from 'express-session'
 // import authPassport from './config/passport'
- 
-
-
-
 
 const app = express()
 
@@ -45,15 +42,15 @@ const limiter = rateLimit({
 app.use('/users', limiter)
 
 // Data sanitization against XSS
-app.use(xss());
+app.use(xss())
 
 // Prevent http param pollution
-app.use(hpp());
+app.use(hpp())
 
 // Implement CORS
-app.use(cors());
+app.use(cors())
 
-app.options('*', cors());
+app.options('*', cors())
 // app.use(
 //   session({
 //     secret: process.env.SESSION_SECRET || "secret",
@@ -64,11 +61,11 @@ app.options('*', cors());
 
 // app.use(authPassport.initialize());
 // app.use(authPassport.session());
-app.use(compression());
+app.use(compression())
 
-app.disable('x-powered-by');
+app.disable('x-powered-by')
 
-app.use(morgan('combined'));
+app.use(morgan('combined'))
 
 // app.use(
 //   morgan('combined', {
@@ -85,11 +82,13 @@ app.use(morgan('combined'));
 // );
 
 app.use(bodyParser.json())
- 
-const mainRouter = new MainRouter();
-app.use("/api/v1", mainRouter.router);
+
+// ✅ Serve public folder statically before routes
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')))
+
+const mainRouter = new MainRouter()
+app.use('/api/v1', mainRouter.router)
 
 app.use(handleErrors)
 
 export default app
- 
