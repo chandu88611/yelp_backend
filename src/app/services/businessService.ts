@@ -104,33 +104,26 @@ export class BusinessService {
     return { success: true, uploadedImages: uploadUrls }
   }
 
-  // ✅ Delete Business Photo
-  async deleteBusinessPhoto(businessId: string, photoId: string, userId: string) {
-    // Find the business to ensure it exists
-    const business = await this.businessRepository.findOne({ where: { id: businessId }, relations: ['owner'] })
+  // ✅ Delete Business Photo (Admin-only, no userId needed)
+  async deleteBusinessPhoto(businessId: string, photoId: string) {
+    // Check if the business exists
+    const business = await this.businessRepository.findOne({ where: { id: businessId } })
     if (!business) throw new Error('Business not found')
 
-    // Ensure the user is the owner of the business
-    if (business.owner.id !== userId) {
-      throw new Error('You are not authorized to delete photos for this business')
-    }
-
-    // Find the photo by its ID
+    // Find the photo by ID and ensure it belongs to the business
     const photo = await this.photoRepository.findOne({ where: { id: photoId }, relations: ['business'] })
     if (!photo) throw new Error('Photo not found')
-
-    // Ensure the photo belongs to the business
     if (photo.business.id !== business.id) {
       throw new Error('This photo does not belong to the business')
     }
 
-    // Delete the photo file from the file system
+    // Delete the physical photo file if it exists
     const filePath = path.join(__dirname, '..', '..', 'public', photo.photoUrl)
     if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath) // Delete the file from the server
+      fs.unlinkSync(filePath)
     }
 
-    // Delete the photo record from the database
+    // Delete the photo from the database
     await this.photoRepository.delete(photoId)
 
     return { success: true, message: 'Photo deleted successfully' }
@@ -187,7 +180,7 @@ export class BusinessService {
         { city: ILike(`%${search}%`) },
         { description: ILike(`%${search}%`) },
       ],
-      relations: ['owner', 'amenities', 'categories'],
+      relations: ['owner', 'amenities', 'categories', 'galleries'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,

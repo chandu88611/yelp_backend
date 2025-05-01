@@ -51,6 +51,7 @@ app.use(hpp())
 app.use(cors())
 
 app.options('*', cors())
+
 // app.use(
 //   session({
 //     secret: process.env.SESSION_SECRET || "secret",
@@ -84,7 +85,12 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 
 // ✅ Serve public folder statically before routes
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')))
+// app.use('/images', express.static(path.join(__dirname, 'public', 'images')))
+
+app.use('/images', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (or restrict to frontend URL)
+  next();
+}, express.static(path.join(__dirname, 'public', 'images')));
 
 const mainRouter = new MainRouter()
 app.use('/api/v1', mainRouter.router)

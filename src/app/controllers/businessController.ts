@@ -86,12 +86,11 @@ export class BusinessController {
   }
 
   // ✅ Delete Business Photo
-  async deleteBusinessPhoto(req: AuthenticatedRequest, res: Response) {
+  async deleteBusinessPhoto(req: Request, res: Response) {
     try {
-      const { businessId, photoId } = req.params // Get the business ID and photo ID from params
-      const userId = req.user.id // Get the userId from the authenticated user
+      const { businessId, photoId } = req.params // Get business ID and photo ID from URL params
 
-      const result = await this.businessService.deleteBusinessPhoto(businessId, photoId, userId)
+      const result = await this.businessService.deleteBusinessPhoto(businessId, photoId) // No userId needed
 
       return res.status(200).json({ success: true, message: result.message })
     } catch (error) {
