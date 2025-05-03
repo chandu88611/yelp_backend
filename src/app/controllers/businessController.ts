@@ -140,6 +140,17 @@ export class BusinessController {
     }
   }
 
+  // ✅ Get All Businesses Based on Category (No Search or Pagination)
+  async getBusinessesByCategory(req: Request, res: Response) {
+    try {
+      const { category = '' } = req.query
+      const businesses = await this.businessService.getBusinessesByCategory(category.toString())
+      return res.status(200).json({ success: true, data: businesses })
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message })
+    }
+  }
+
   // ✅ Delete Business
   async deleteBusiness(req: AuthenticatedRequest, res: Response) {
     try {

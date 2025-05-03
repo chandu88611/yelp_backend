@@ -185,8 +185,21 @@ export class BusinessService {
       skip: (page - 1) * limit,
       take: limit,
     })
-
     return { data, total }
+  }
+
+  // In businessService.ts
+
+  // ✅ Get Businesses By Category
+  async getBusinessesByCategory(category: string): Promise<Business[]> {
+    const whereClause = category ? { businessType: category } : {} // Filters by businessType
+
+    const businesses = await this.businessRepository.find({
+      where: whereClause,
+      relations: ['owner', 'amenities', 'categories', 'galleries'], // Include relations
+      order: { createdAt: 'DESC' },
+    })
+    return businesses
   }
 
   // ✅ Delete Business

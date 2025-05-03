@@ -23,6 +23,10 @@ export class BusinessRoutes {
       this.businessController.createBusiness(req, res),
     )
     this.router.get('/', (req, res) => this.businessController.getBusinesses(req, res))
+    this.router.get('/category', (req: AuthenticatedRequest, res) =>
+      this.businessController.getBusinessesByCategory(req, res),
+    )
+
     this.router.get('/:id', (req, res) => this.businessController.getBusinessById(req, res))
     this.router.put('/:id', authenticateJWT, (req: AuthenticatedRequest, res) =>
       this.businessController.updateBusinessDetails(req, res),
