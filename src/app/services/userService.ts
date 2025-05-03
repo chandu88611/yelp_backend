@@ -9,7 +9,7 @@ export class UserService {
   private userRepository = dataSource.getRepository(User);
 
   // ✅ Register User
-  async registerUser(fullName: string, email: string, password: string) {
+  async registerUser(fullName: string, email: string, password: string,role:string) {
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) throw new Error("Email already in use");
 
@@ -20,6 +20,7 @@ export class UserService {
       fullName, 
       email, 
       passwordHash: hashedPassword 
+      ,role
     });
 
     await this.userRepository.save(user);
@@ -49,5 +50,45 @@ export class UserService {
   // ✅ List All Users
   async listUsers() {
     return this.userRepository.find();
+  }
+ 
+  
+  async updateUser(userId: string, updateData: Partial<User>) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+
+    Object.assign(user, updateData);
+    return await this.userRepository.save(user);
+  }
+
+  // ✅ Delete User (Admin Only)
+  async deleteUser(userId: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+
+    await this.userRepository.remove(user);
+  }
+
+  // ✅ Update Password (User Profile Settings)
+  async updatePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) throw new Error("Current password is incorrect");
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.passwordHash = hashedPassword;
+    return await this.userRepository.save(user);
+  }
+
+  // ✅ Reset Password (Forgot Password Flow)
+  async resetPassword(userId: string, newPassword: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.passwordHash = hashedPassword;
+    return await this.userRepository.save(user);
   }
 }

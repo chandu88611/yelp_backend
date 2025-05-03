@@ -3,6 +3,11 @@ import { Business } from "./Business";
 import { Review } from "./Review";
 import { Photo } from "./Photo";
  
+// export enum UserRole {
+//     USER = "user",
+//     BUSINESS_OWNER = "business_owner",
+//     ADMIN = "admin",
+//   }
 
 @Entity('users')
 export class User {
