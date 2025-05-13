@@ -3,6 +3,7 @@ import { UserRoutes } from "./userRoutes";
 import { BusinessRoutes } from "./businessRoutes";
 import { ServiceRoutes } from "./servicesRoutes";
 import { AmenityRoutes } from "./amenityRoutes";
+import { CategoryRoutes } from "./categoryRoutes";
  
 // import { BusinessRoutes } from "./businessRoutes"; // Example: Add other routes
 // import { ServiceRoutes } from "./serviceRoutes";   // Example: Add other routes
@@ -20,6 +21,7 @@ export class MainRouter {
     this.router.use("/businesses", new BusinessRoutes().router);
     this.router.use("/services", new ServiceRoutes().router);
     this.router.use("/amenities", new AmenityRoutes().router);
+    this.router.use("/categories", new CategoryRoutes().router);
     
   }
 }

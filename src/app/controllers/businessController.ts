@@ -18,16 +18,7 @@ export class BusinessController {
   // ✅ Create Business
   async createBusiness(req: AuthenticatedRequest, res: Response) {
     try {
-      const {
-        businessName,
-        description,
-        website,
-        establishedYear,
-        employeeCount,
-
-        services,
-        amenities,
-      } = req.body
+      const { businessName, description, website, establishedYear, employeeCount, services, amenities } = req.body
 
       const ownerId = req.user.id
 
@@ -133,7 +124,6 @@ export class BusinessController {
       const { page = '1', limit = '10', search = '' } = req.query
 
       const businesses = await this.businessService.getBusinesses(Number(page), Number(limit), search.toString())
-
       return res.status(200).json({ success: true, data: businesses })
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message })

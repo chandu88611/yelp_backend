@@ -12,3 +12,4 @@ export class Amenity {
   @ManyToMany(() => Business, (business) => business.amenities)
   businesses: Business[];
 }
+ 

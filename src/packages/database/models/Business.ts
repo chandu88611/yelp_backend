@@ -43,8 +43,8 @@ export class Business {
   @Column({ nullable: true })
   businessType: string // Nullable if not defined
 
-  @Column('simple-array', { nullable: true })
-  services: string[]
+  // @Column('simple-array', { nullable: true })
+  // services: string[]
 
   @Column({ type: 'text', nullable: true })
   overview: string
@@ -106,7 +106,6 @@ export class Business {
   @Column({ nullable: true })
   whatsapp: string
 
-  // Operating hours for each day (could be adjusted to match the exact structure)
   @Column({ type: 'json', nullable: true })
   operatingHours: Record<string, { open: string | null; close: string | null }> = {}
 
@@ -160,7 +159,7 @@ export class Business {
 
   @ManyToMany(() => Service, { cascade: true })
   @JoinTable()
-  servicesList: Service[]
+  services: Service[]
 
   @ManyToMany(() => Amenity, { cascade: true })
   @JoinTable()
@@ -171,10 +170,10 @@ export class Business {
   categories: Category[]
 
   @Column({ nullable: true })
-  specialOffers: string // Example: "10% discount for first-time customers"
+  specialOffers: string
 
   @Column({ nullable: true })
-  bookingUrl: string // Link to booking page
+  bookingUrl: string
 
   // Creation and Update timestamps
   @CreateDateColumn()

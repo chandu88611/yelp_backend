@@ -1,14 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
-import { Business } from "./Business";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm'
+import { Business } from './Business'
 
-@Entity("category")
+@Entity('category')
 export class Category {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
-    @Column({ unique: true, length: 100 })
-    name: string;
+  @Column({ unique: true, length: 100 })
+  name: string
 
-    @ManyToMany(() => Business, (business) => business.categories)
-    businesses: Business[];
+  @ManyToMany(() => Business, (business) => business.businessType)
+  businesses: Business[]
 }

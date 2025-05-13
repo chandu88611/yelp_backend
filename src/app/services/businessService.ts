@@ -8,12 +8,17 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import { Amenity } from '~/packages/database/models/Amenity'
+import { In } from 'typeorm' // Make sure this is imported at the top
+import { Service } from '~/packages/database/models/Service'
+import { Category } from '~/packages/database/models/Category'
 
 export class BusinessService {
   private businessRepository = dataSource.getRepository(Business)
   private amenityRepository = dataSource.getRepository(Amenity)
   private photoRepository = dataSource.getRepository(Photo)
   private userRepository = dataSource.getRepository(User)
+  private serviceRepository = dataSource.getRepository(Service) // ✅ Add this
+  private categoryRepository = dataSource.getRepository(Category) // ✅ Add this
 
   // // ✅ Upload Images to GoDaddy Server & Store in Database
 
@@ -130,11 +135,49 @@ export class BusinessService {
   }
 
   // ✅ Update Business Basic Details
-  async updateBusinessDetails(businessId: string, updateData: Partial<Business>) {
-    const business = await this.businessRepository.findOne({ where: { id: businessId } })
+  // async updateBusinessDetails(businessId: string, updateData: Partial<Business>) {
+  //   const business = await this.businessRepository.findOne({ where: { id: businessId } })
+  //   if (!business) throw new Error('Business not found')
+
+  //   Object.assign(business, updateData)
+  //   return await this.businessRepository.save(business)
+  // }
+  async updateBusinessDetails(
+    businessId: string,
+    updateData: Partial<Business> & { services?: string[]; amenities?: string[] },
+  ) {
+    const business = await this.businessRepository.findOne({
+      where: { id: businessId },
+      relations: ['services', 'amenities'],
+    })
+
     if (!business) throw new Error('Business not found')
 
-    Object.assign(business, updateData)
+    // Handle services
+    if (updateData.services) {
+      const services = await this.serviceRepository.findBy({
+        id: In(updateData.services),
+      })
+      business.services = services
+    }
+
+    // Handle amenities
+    if (updateData.amenities) {
+      const amenities = await this.amenityRepository.findBy({
+        id: In(updateData.amenities),
+      })
+      business.amenities = amenities
+    }
+
+    // Avoid assigning services and amenities again
+    const {
+      services: _services, // discard
+      amenities: _amenities, // discard
+      ...otherFields
+    } = updateData
+
+    Object.assign(business, otherFields)
+
     return await this.businessRepository.save(business)
   }
 
@@ -145,17 +188,34 @@ export class BusinessService {
     const owner = await this.userRepository.findOne({ where: { id: businessData.ownerId } })
     if (!owner) throw new Error('Owner not found')
 
-    // Fetch amenities by IDs
-    let amenities = []
-    if (businessData.amenities && businessData.amenities.length > 0) {
-      amenities = await this.amenityRepository.findByIds(businessData.amenities)
+    const amenities =
+      businessData.amenities && businessData.amenities.length > 0
+        ? await this.amenityRepository.findBy({ id: In(businessData.amenities) })
+        : []
+
+    const services =
+      businessData.services && businessData.services.length > 0
+        ? await this.serviceRepository.findBy({ id: In(businessData.services) })
+        : []
+
+    let businessType = null
+    if (businessData.businessType) {
+      // Find the category and save its ID
+      const category = await this.categoryRepository.findOne({
+        where: { id: businessData.businessType }, // businessData.businessType will be a string (category id)
+      })
+      if (!category) throw new Error('Invalid business type')
+
+      // Save only the ID of the Category, not the whole object
+      businessType = category.id
     }
 
     const business = this.businessRepository.create({
       ...businessData,
       owner,
-      amenities, // <-- Attach fetched amenities
-      services: businessData.services || [], // safe fallback
+      amenities,
+      services,
+      businessType, // businessType will now be just the category ID (string)
     })
 
     return await this.businessRepository.save(business)
@@ -165,7 +225,7 @@ export class BusinessService {
   async getBusinessById(businessId: string) {
     const business = await this.businessRepository.findOne({
       where: { id: businessId },
-      relations: ['amenities', 'galleries'], // removed "services"
+      relations: ['amenities', 'galleries', 'services'],
     })
 
     if (!business) throw new Error('Business not found')
@@ -180,7 +240,7 @@ export class BusinessService {
         { city: ILike(`%${search}%`) },
         { description: ILike(`%${search}%`) },
       ],
-      relations: ['owner', 'amenities', 'categories', 'galleries'],
+      relations: ['owner', 'amenities', 'categories', 'galleries', 'services'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
@@ -196,7 +256,7 @@ export class BusinessService {
 
     const businesses = await this.businessRepository.find({
       where: whereClause,
-      relations: ['owner', 'amenities', 'categories', 'galleries'], // Include relations
+      relations: ['owner', 'amenities', 'categories', 'galleries', 'services'], // Include relations
       order: { createdAt: 'DESC' },
     })
     return businesses

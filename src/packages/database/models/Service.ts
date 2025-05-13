@@ -1,14 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
-import { Business } from "./Business";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm'
+import { Business } from './Business'
 
-@Entity("services")
+@Entity('services')
 export class Service {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
   @Column({ length: 255, unique: true })
-  name: string;
+  name: string
 
   @ManyToMany(() => Business, (business) => business.services)
-  businesses: Business[];
+  businesses: Business[]
 }
