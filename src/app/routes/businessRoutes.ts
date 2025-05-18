@@ -23,6 +23,8 @@ export class BusinessRoutes {
       this.businessController.createBusiness(req, res),
     )
     this.router.get('/', (req, res) => this.businessController.getBusinesses(req, res))
+    this.router.get('/latest', (req, res) => this.businessController.getLatestBusinesses(req, res))
+
     this.router.get('/category', (req: AuthenticatedRequest, res) =>
       this.businessController.getBusinessesByCategory(req, res),
     )

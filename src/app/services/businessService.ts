@@ -248,6 +248,21 @@ export class BusinessService {
     return { data, total }
   }
 
+  // ✅ Get Latest 10 Businesses (ordered by createdAt and updatedAt DESC)
+
+  async getLatestBusinesses(): Promise<Business[]> {
+    const latestBusinesses = await this.businessRepository.find({
+      relations: ['owner', 'amenities', 'categories', 'galleries', 'services'],
+      order: {
+        updatedAt: 'DESC',
+        createdAt: 'DESC',
+      },
+      take: 10,
+    })
+
+    return latestBusinesses
+  }
+
   // In businessService.ts
 
   // ✅ Get Businesses By Category

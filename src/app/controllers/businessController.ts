@@ -130,6 +130,16 @@ export class BusinessController {
     }
   }
 
+  // ✅ Get Latest 10 Businesses (no pagination, no search)
+  async getLatestBusinesses(req: Request, res: Response) {
+    try {
+      const latestBusinesses = await this.businessService.getLatestBusinesses()
+      return res.status(200).json({ success: true, data: latestBusinesses })
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message })
+    }
+  }
+
   // ✅ Get All Businesses Based on Category (No Search or Pagination)
   async getBusinessesByCategory(req: Request, res: Response) {
     try {

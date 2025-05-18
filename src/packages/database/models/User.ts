@@ -6,6 +6,12 @@ import { Photo } from "./Photo";
 
 @Entity('users')
 export class User {
+    static createQueryBuilder() {
+      throw new Error('Method not implemented.');
+    }
+    save() {
+      throw new Error('Method not implemented.');
+    }
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

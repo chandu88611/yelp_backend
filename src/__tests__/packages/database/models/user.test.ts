@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { User } from '~/packages/database/models/User'
 
 const email = faker.internet.email()
@@ -9,10 +9,7 @@ describe('User Model', () => {
     model.email = email
     await model.save()
 
-    const user = await User.createQueryBuilder()
-      .select()
-      .where({ email })
-      .getOne()
+    const user = await User.createQueryBuilder().select().where({ email }).getOne()
 
     expect(user).not.toBeUndefined()
     expect(user.email).toBe(email)
