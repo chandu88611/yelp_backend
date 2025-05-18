@@ -20,7 +20,7 @@ import { MainRouter } from './app/routes'
 
 const app = express()
 
-app.enable('trust proxy')
+// app.enable('trust proxy')
 
 // Set Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }))
@@ -42,10 +42,10 @@ const limiter = rateLimit({
 app.use('/users', limiter)
 
 // Data sanitization against XSS
-app.use(xss())
+// app.use(xss())
 
 // Prevent http param pollution
-app.use(hpp())
+// app.use(hpp())
 
 // Implement CORS
 app.use(cors())
@@ -62,11 +62,11 @@ app.options('*', cors())
 
 // app.use(authPassport.initialize());
 // app.use(authPassport.session());
-app.use(compression())
+// app.use(compression())
 
-app.disable('x-powered-by')
+// app.disable('x-powered-by')
 
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
 
 // app.use(
 //   morgan('combined', {
@@ -87,10 +87,12 @@ app.use(bodyParser.json())
 // ✅ Serve public folder statically before routes
 // app.use('/images', express.static(path.join(__dirname, 'public', 'images')))
 
-app.use('/images', (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (or restrict to frontend URL)
-  next();
-}, express.static(path.join(__dirname, 'public', 'images')));
+// app.use('/images', (req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (or restrict to frontend URL)
+//   next();
+// }, express.static(path.join(__dirname, 'public', 'images')));
+// NEW - exposes images under /api/images
+app.use('/api/images', express.static(path.join(__dirname, 'public/images')))
 
 const mainRouter = new MainRouter()
 app.use('/api/v1', mainRouter.router)
