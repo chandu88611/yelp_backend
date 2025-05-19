@@ -56,9 +56,6 @@ export class BusinessController {
   // ✅ Upload Photos
   async uploadBusinessPhotos(req: AuthenticatedRequest, res: Response) {
     try {
-      console.log('Request Body:', req.body) // To see if there is anything in the body
-      console.log('Request Files:', req.files) // To see the uploaded files
-
       const { id } = req.params
       const userId = req.user.id
       const files = req.files as Express.Multer.File[]
@@ -69,7 +66,6 @@ export class BusinessController {
       }
 
       const uploaded = await this.businessService.uploadBusinessPhotos(id, userId, files, type)
-      console.log(uploaded)
       return res.status(200).json({ success: true, data: uploaded })
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message })
