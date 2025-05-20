@@ -85,7 +85,7 @@ export class BusinessService {
         // const relativePath = `/images/${fileName}`
         const relativePath = `/api/images/${fileName}` // Include full API path
 
-         // Save the file locally
+        // Save the file locally
         fs.writeFileSync(filePath, file.buffer)
 
         // Create a new photo record, including the 'type' of gallery
